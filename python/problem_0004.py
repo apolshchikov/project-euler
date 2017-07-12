@@ -29,4 +29,4 @@ if __name__ == "__main__":
             prod = i * j
             if is_palindrome(prod) and prod >= max:
                 max = prod
-    print max
+    print(max)

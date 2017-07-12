@@ -27,4 +27,4 @@ def consecutive_factors(n):
 
 
 if __name__ == "__main__":
-    print consecutive_factors(10)
+    print(consecutive_factors(10))

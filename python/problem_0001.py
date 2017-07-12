@@ -20,4 +20,4 @@ if __name__ == "__main__":
     for i in numbers:
         multiples_arr.extend(get_multiples(i, 1000))
     multiple_set = set(multiples_arr)
-    print sum(multiple_set)
+    print(sum(multiple_set))

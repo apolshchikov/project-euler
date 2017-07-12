@@ -30,4 +30,4 @@ def prime_factorization(n):
 
 
 if __name__ == "__main__":
-    print max(prime_factorization(600851475143))
+    print(max(prime_factorization(600851475143)))

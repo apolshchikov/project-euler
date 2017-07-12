@@ -36,4 +36,4 @@ if __name__ == "__main__":
         value = fibonacci(i)
         if value % 2 == 0:
             fib_sum += value
-    print fib_sum
+    print(fib_sum)
