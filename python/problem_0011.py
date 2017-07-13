@@ -52,43 +52,107 @@ q = """
 """
 
 
-def string_to_matrix(s):
-    s = s.strip()
-    rows = s.split("\n")
-    row_count = len(rows)
-    col_count = len(rows[0].split(" "))
-    arr = []
-    for row in rows:
-        cols = [int(i) for i in row.split(" ")]
-        arr.append(cols)
+class Window(object):
+    direction_offset = {
+        "N": [-1, 0],
+        "NE": [-1, 1],
+        "E": [0, 1],
+        "SE": [1, 1],
+        "S": [1, 0],
+        "SW": [1, -1],
+        "W": [0, -1],
+        "NW": [-1, -1]
+    }
 
-    return arr
+    def __init__(self, center, size, direction, array_size):
+        self.center = center
+        self.size = size
+        self.direction = self.direction_offset[direction]
+        self.array_size = array_size
+
+    def generate(self):
+        output = []
+
+        for i in range(0, self.size):
+            row = self.center[0] + i*self.direction[0]
+            col = self.center[1] + i*self.direction[1]
+            if 0 <= row < self.array_size[0] and 0 <= col < self.array_size[1]:
+                output.append([row, col])
+
+        return output
 
 
-def row_oriented_matrix(mat):
-    return mat
+class Matrix(object):
+    def __init__(self, data):
+        self.data = data
 
+    @classmethod
+    def string_to_matrix(cls, s):
+        s = s.strip()
+        rows = s.split("\n")
+        row_count = len(rows)
+        col_count = len(rows[0].split(" "))
+        arr = []
+        for row in rows:
+            cols = [int(i) for i in row.split(" ")]
+            arr.append(cols)
 
-def col_oriented_matrix(mat):
-    """
-    Essentially a transpose function - can operate on the matrix as if it's column-oriented
-    :param mat:
-    :return:
-    """
-    arr = []
-    count_cols = len(mat[0])
-    for col in range(0, count_cols):
-        current_col = []
-        for row in mat:
-            current_col.append(row[col])
-        arr.append(current_col)
-    return arr
+        m = cls(data=arr)
+        return m
+
+    def row_oriented_matrix(self):
+        return self.data
+
+    def column_oriented_matrix(self):
+        """
+            Essentially a transpose function - can operate on the matrix as if it's column-oriented
+            :param mat:
+            :return:
+            """
+        arr = []
+        count_cols = len(self.data[0])
+        for col in range(0, count_cols):
+            current_col = []
+            for row in self.data:
+                current_col.append(row[col])
+            arr.append(current_col)
+        return arr
+
+    def window(self, center, size, direction):
+        """
+        Window containing the array of elements based on a a given size and direction. Bounded by the size of the
+        containing array
+        :param center: array with the row, col coordinates of the center
+        :param size: distance away from center
+        :param direction: cardinal direction from center (N, NE, E, SE, S, SW, W, NW)
+        :return: array containing the elements inside the window
+        """
+
+        w = Window(center=center, size=size, direction=direction, array_size=[len(self.data[0]), len(self.data[1])])
+        coordinates = w.generate()
+        output = []
+        for c in coordinates:
+            output.append(self.data[c[0]][c[1]])
+
+        return output
 
 if __name__ == "__main__":
-    mat = string_to_matrix(q)
-    romat = row_oriented_matrix(mat)
-    comat = col_oriented_matrix(mat)
-    test = col_oriented_matrix(comat)
-    print(romat)
-    print(comat)
-    print(test)
+    mat = Matrix.string_to_matrix(q)
+    # print(mat.data)
+    windows = []
+    for d in Window.direction_offset.keys():
+        for i in range(0, 20):
+            for j in range(0, 20):
+                w = mat.window(center=[i, j], size=4, direction=d)
+                windows.append(w)
+
+    prod = 0
+    for w in windows:
+        p = 1
+        for k in w:
+            p *= k
+        if p >= prod:
+            prod = p
+
+    print(prod)
+
